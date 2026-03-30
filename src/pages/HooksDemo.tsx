@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useReducer, useRef, useMemo, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { Play, RotateCcw, Info } from 'lucide-react';
+import { Play, RotateCcw, Info, Code } from 'lucide-react';
+import CodeBlock from '../components/CodeBlock';
+import DemoSection from '../components/DemoSection';
 
 /**
  * useReducer 示例：处理复杂状态逻辑
@@ -41,11 +43,11 @@ export default function HooksDemo() {
       </header>
 
       {/* useState 示例 */}
-      <section className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-6 text-blue-600 font-bold">
-          <Info size={20} />
-          <span>useState: 基础状态</span>
-        </div>
+      <DemoSection 
+        title="useState: 基础状态" 
+        icon={<Info size={20} />} 
+        iconColorClass="text-blue-600"
+      >
         <div className="space-y-4">
           <p className="text-lg">你好，<span className="font-bold text-blue-600">{name}</span></p>
           <input 
@@ -57,46 +59,79 @@ export default function HooksDemo() {
           />
           <p className="text-xs text-slate-400 italic">// 注释：useState 返回一个状态值和更新它的函数。</p>
         </div>
-      </section>
+        <div>
+          <CodeBlock 
+            title="useState 示例代码"
+            code={`const [name, setName] = useState('React 学习者');
+
+// 渲染输入框
+<input 
+  type="text" 
+  value={name}
+  onChange={(e) => setName(e.target.value)}
+/>`} 
+          />
+        </div>
+      </DemoSection>
 
       {/* useReducer 示例 */}
-      <section className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-6 text-purple-600 font-bold">
-          <RotateCcw size={20} />
-          <span>useReducer: 复杂逻辑</span>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="text-4xl font-mono font-bold w-20 text-center">{state.count}</div>
-          <div className="flex gap-2">
-            <button 
-              onClick={() => dispatch({ type: 'decrement' })}
-              className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold"
-            >
-              -
-            </button>
-            <button 
-              onClick={() => dispatch({ type: 'increment' })}
-              className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold"
-            >
-              +
-            </button>
-            <button 
-              onClick={() => dispatch({ type: 'reset' })}
-              className="px-4 py-2 text-slate-500 hover:text-slate-700"
-            >
-              重置
-            </button>
+      <DemoSection 
+        title="useReducer: 复杂逻辑" 
+        icon={<RotateCcw size={20} />} 
+        iconColorClass="text-purple-600"
+      >
+        <div>
+          <div className="flex items-center gap-6">
+            <div className="text-4xl font-mono font-bold w-20 text-center">{state.count}</div>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => dispatch({ type: 'decrement' })}
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold"
+              >
+                -
+              </button>
+              <button 
+                onClick={() => dispatch({ type: 'increment' })}
+                className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-bold"
+              >
+                +
+              </button>
+              <button 
+                onClick={() => dispatch({ type: 'reset' })}
+                className="px-4 py-2 text-slate-500 hover:text-slate-700"
+              >
+                重置
+              </button>
+            </div>
           </div>
+          <p className="mt-4 text-xs text-slate-400 italic">// 注释：当状态逻辑复杂时，useReducer 比 useState 更清晰，且易于测试。</p>
         </div>
-        <p className="mt-4 text-xs text-slate-400 italic">// 注释：当状态逻辑复杂时，useReducer 比 useState 更清晰，且易于测试。</p>
-      </section>
+        <div>
+          <CodeBlock 
+            title="useReducer 示例代码"
+            code={`const counterReducer = (state, action) => {
+  switch (action.type) {
+    case 'increment': return { count: state.count + 1 };
+    case 'decrement': return { count: state.count - 1 };
+    case 'reset': return { count: 0 };
+    default: return state;
+  }
+};
+
+const [state, dispatch] = useReducer(counterReducer, { count: 0 });
+
+// 触发更新
+<button onClick={() => dispatch({ type: 'increment' })}>+</button>`} 
+          />
+        </div>
+      </DemoSection>
 
       {/* useRef 示例 */}
-      <section className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-        <div className="flex items-center gap-2 mb-6 text-emerald-600 font-bold">
-          <Play size={20} />
-          <span>useRef: DOM 访问与持久化</span>
-        </div>
+      <DemoSection 
+        title="useRef: DOM 访问与持久化" 
+        icon={<Play size={20} />} 
+        iconColorClass="text-emerald-600"
+      >
         <div className="space-y-4">
           <div className="flex gap-2">
             <input 
@@ -117,7 +152,23 @@ export default function HooksDemo() {
           </p>
           <p className="text-xs text-slate-400 italic">// 注释：useRef 的改变不会触发重新渲染，非常适合存储定时器 ID 或 DOM 引用。</p>
         </div>
-      </section>
+        <div>
+          <CodeBlock 
+            title="useRef 示例代码"
+            code={`const inputRef = useRef<HTMLInputElement>(null);
+const renderCount = useRef(0);
+
+// 每次渲染自增，但不触发重绘
+renderCount.current++;
+
+// 绑定 DOM 并操作
+<input ref={inputRef} />
+<button onClick={() => inputRef.current?.focus()}>
+  聚焦输入框
+</button>`} 
+          />
+        </div>
+      </DemoSection>
     </div>
   );
 }
